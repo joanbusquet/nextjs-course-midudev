@@ -1,65 +1,88 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import { colors } from "../styles/theme";
+
+import AppLayout from "../components/AppLayout";
+import Button from "../components/Button";
+import GitHub from "../components/Icons/github";
+
+import { loginWithGitHub, onAuthStateChanged } from "../firebase/client";
 
 export default function Home() {
+  //Inicializamos el estado para guardar los datos del usuario
+  const [user, setUser] = useState(undefined);
+
+  //Cuando cargue el componente ejecutar la función para comprobar si estamos logueados
+  //pasando como parametro el método setUser para actualizar los datos del usuario
+  useEffect(() => {
+    onAuthStateChanged(setUser);
+  }, []);
+
+  //Función para llamar al login cuando hacemos clic al botón de login con Github
+  const handleClick = () => {
+    //Llamamos al método loginWithGitHub y si es OK, guardamos los datos del usuario al estado user
+    loginWithGitHub()
+      .then((user) => {
+        setUser(user);
+      })
+      .catch((err) => console.log(err));
+  };
   return (
-    <div className={styles.container}>
+    <>
       <Head>
-        <title>Create Next App</title>
+        <title>devter 🐦</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+      <AppLayout>
+        <section>
+          <img src="/logo.png" alt="logo" />
+          <h1>Devter</h1>
+          <h2>Talk about development with developers</h2>
+          <div>
+            {/* Si el usuario es null (no ha hecho login) */}
+            {user === null && (
+              <Button onClick={handleClick}>
+                <GitHub fill={"white"} width={24} height={24} />
+                Login with GitHub
+              </Button>
+            )}
+            {/* Si el usuario existe (está logueado) y existe avatar, mostrar datos */}
+            {user && user.avatar && (
+              <div>
+                <img src={user.avatar} />
+                <strong>{user.username}</strong>
+              </div>
+            )}
+          </div>
+        </section>
+      </AppLayout>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+      <style jsx>{`
+        img {
+          width: 120px;
+        }
+        div {
+          margin-top: 16px;
+        }
+        section {
+          display: grid;
+          place-content: center;
+          place-items: center;
+          height: 100%;
+        }
+        h1 {
+          color: ${colors.primary};
+          font-weight: 800;
+          margin-bottom: 16px;
+        }
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+        h2 {
+          color: ${colors.secondary};
+          font-size: 21px;
+          margin: 0;
+        }
+      `}</style>
+    </>
+  );
 }
