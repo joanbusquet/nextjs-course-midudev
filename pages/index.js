@@ -1,32 +1,33 @@
-import { useEffect, useState } from "react";
-import Head from "next/head";
-import { colors } from "../styles/theme";
+import { useEffect, useState } from "react"
+import Head from "next/head"
+import { colors } from "styles/theme"
 
-import AppLayout from "../components/AppLayout";
-import Button from "../components/Button";
-import GitHub from "../components/Icons/github";
+import AppLayout from "components/AppLayout"
+import Button from "components/Button"
+import GitHub from "components/Icons/github"
 
-import { loginWithGitHub, onAuthStateChanged } from "../firebase/client";
+import { loginWithGitHub, onAuthStateChanged } from "firebase/client"
+import Avatar from "components/Avatar"
 
 export default function Home() {
-  //Inicializamos el estado para guardar los datos del usuario
-  const [user, setUser] = useState(undefined);
+  // Inicializamos el estado para guardar los datos del usuario
+  const [user, setUser] = useState(undefined)
 
-  //Cuando cargue el componente ejecutar la función para comprobar si estamos logueados
-  //pasando como parametro el método setUser para actualizar los datos del usuario
+  // Cuando cargue el componente ejecutar la función para comprobar si estamos logueados
+  // pasando como parametro el método setUser para actualizar los datos del usuario
   useEffect(() => {
-    onAuthStateChanged(setUser);
-  }, []);
+    onAuthStateChanged(setUser)
+  }, [])
 
-  //Función para llamar al login cuando hacemos clic al botón de login con Github
+  // Función para llamar al login cuando hacemos clic al botón de login con Github
   const handleClick = () => {
-    //Llamamos al método loginWithGitHub y si es OK, guardamos los datos del usuario al estado user
+    // Llamamos al método loginWithGitHub y si es OK, guardamos los datos del usuario al estado user
     loginWithGitHub()
       .then((user) => {
-        setUser(user);
+        setUser(user)
       })
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
   return (
     <>
       <Head>
@@ -50,8 +51,11 @@ export default function Home() {
             {/* Si el usuario existe (está logueado) y existe avatar, mostrar datos */}
             {user && user.avatar && (
               <div>
-                <img src={user.avatar} />
-                <strong>{user.username}</strong>
+                <Avatar
+                  src={user.avatar}
+                  alt={user.username}
+                  text={user.username}
+                />
               </div>
             )}
           </div>
@@ -74,6 +78,7 @@ export default function Home() {
         h1 {
           color: ${colors.primary};
           font-weight: 800;
+          font-size: 32px;
           margin-bottom: 16px;
         }
 
@@ -84,5 +89,5 @@ export default function Home() {
         }
       `}</style>
     </>
-  );
+  )
 }
