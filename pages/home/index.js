@@ -1,42 +1,76 @@
 import { useEffect, useState } from "react"
+import Link from "next/link"
+import Head from "next/head"
+
 import AppLayout from "components/AppLayout"
 
 import Devit from "components/Devit"
+import useUser from "hooks/useUser"
+import { fetchLatestDevits } from "firebase/client"
+
+import Create from "components/Icons/Create"
+import Home from "components/Icons/Home"
+import Search from "components/Icons/Search"
+import { colors } from "styles/theme"
 
 export default function HomePage() {
   const [timeline, setTimeline] = useState([])
+  const user = useUser() // Temporal
 
   useEffect(() => {
-    fetch("/api/statuses/home_timeline")
-      .then((res) => res.json())
-      .then(setTimeline)
-  }, [])
+    user && fetchLatestDevits().then(setTimeline)
+  }, [user])
 
   return (
     <>
       <AppLayout>
+        <Head>
+          <title>Inicio / Devter</title>
+        </Head>
         <header>
           <h2>Inicio</h2>
         </header>
         <section>
-          {timeline.map(({ id, username, avatar, message }) => {
-            return (
-              <Devit
-                key={id}
-                username={username}
-                avatar={avatar}
-                message={message}
-                id={id}
-              />
-            )
-          })}
+          {timeline.map(
+            ({ id, createdAt, userName, avatar, content, userId }) => {
+              return (
+                <Devit
+                  avatar={avatar}
+                  createdAt={createdAt}
+                  content={content}
+                  id={id}
+                  key={id}
+                  userId={userId}
+                  userName={userName}
+                />
+              )
+            }
+          )}
         </section>
-        <nav></nav>
+        <nav>
+          <Link href="/">
+            <a>
+              <Home width={32} height={32} stroke="#09f" />
+            </a>
+          </Link>
+          <Link href="/compose/tweet">
+            <a>
+              <Search width={32} height={32} stroke="#09f" />
+            </a>
+          </Link>
+          <Link href="/compose/tweet">
+            <a>
+              <Create width={32} height={32} stroke="#09f" />
+            </a>
+          </Link>
+        </nav>
       </AppLayout>
       <style jsx>
         {`
           header {
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid #eee;
+            background: #ffffffaa;
+            backdrop-filter: blur(5px);
             position: sticky;
             display: flex;
             align-items: center;
@@ -48,17 +82,37 @@ export default function HomePage() {
           h2 {
             font-weight: 800;
             font-size: 21px;
+            padding-left: 15px;
           }
           section {
-            padding-top: 49px;
+            flex: 1;
           }
-
           nav {
             position: sticky;
             bottom: 0;
-            border-top: 1px solid #ccc;
+            border-top: 1px solid #eee;
             height: 49px;
             width: 100%;
+            background: #fff;
+            display: flex;
+          }
+
+          nav a {
+            align-items: center;
+            display: flex;
+            flex: 1 1 auto;
+            height: 100%;
+            justify-content: center;
+          }
+
+          nav a:hover {
+            background: radial-gradient(#0099ff22 15%, transparent 16%);
+            background-size: 180px 180px;
+            background-position: center;
+          }
+
+          nav a:hover > :global(svg) {
+            stroke: ${colors.primary};
           }
         `}
       </style>

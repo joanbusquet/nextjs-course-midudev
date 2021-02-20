@@ -1,32 +1,30 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import Head from "next/head"
+import { useRouter } from "next/router"
+
+import useUser, { USER_STATES } from "hooks/useUser"
+
 import { colors } from "styles/theme"
 
 import AppLayout from "components/AppLayout"
 import Button from "components/Button"
 import GitHub from "components/Icons/github"
 
-import { loginWithGitHub, onAuthStateChanged } from "firebase/client"
-import Avatar from "components/Avatar"
+import { loginWithGitHub } from "firebase/client"
 
 export default function Home() {
-  // Inicializamos el estado para guardar los datos del usuario
-  const [user, setUser] = useState(undefined)
+  const user = useUser()
+  const router = useRouter()
 
-  // Cuando cargue el componente ejecutar la función para comprobar si estamos logueados
-  // pasando como parametro el método setUser para actualizar los datos del usuario
+  // Si el usuario está logueado, redireccionar a /home
   useEffect(() => {
-    onAuthStateChanged(setUser)
-  }, [])
+    user && router.replace("/home")
+  }, [user])
 
   // Función para llamar al login cuando hacemos clic al botón de login con Github
   const handleClick = () => {
     // Llamamos al método loginWithGitHub y si es OK, guardamos los datos del usuario al estado user
-    loginWithGitHub()
-      .then((user) => {
-        setUser(user)
-      })
-      .catch((err) => console.log(err))
+    loginWithGitHub().catch((err) => console.log(err))
   }
   return (
     <>
@@ -42,22 +40,14 @@ export default function Home() {
           <h2>Talk about development with developers</h2>
           <div>
             {/* Si el usuario es null (no ha hecho login) */}
-            {user === null && (
+            {user === USER_STATES.NOT_LOGGED && (
               <Button onClick={handleClick}>
                 <GitHub fill={"white"} width={24} height={24} />
                 Login with GitHub
               </Button>
             )}
             {/* Si el usuario existe (está logueado) y existe avatar, mostrar datos */}
-            {user && user.avatar && (
-              <div>
-                <Avatar
-                  src={user.avatar}
-                  alt={user.username}
-                  text={user.username}
-                />
-              </div>
-            )}
+            {user === USER_STATES.NOT_KNOWN && <span>Loading...</span>}
           </div>
         </section>
       </AppLayout>
