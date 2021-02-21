@@ -6,7 +6,6 @@ import useUser, { USER_STATES } from "hooks/useUser"
 
 import { colors } from "styles/theme"
 
-import AppLayout from "components/AppLayout"
 import Button from "components/Button"
 import GitHub from "components/Icons/github"
 
@@ -33,24 +32,22 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <AppLayout>
-        <section>
-          <img src="/logo.png" alt="logo" />
-          <h1>Devter</h1>
-          <h2>Talk about development with developers</h2>
-          <div>
-            {/* Si el usuario es null (no ha hecho login) */}
-            {user === USER_STATES.NOT_LOGGED && (
-              <Button onClick={handleClick}>
-                <GitHub fill={"white"} width={24} height={24} />
-                Login with GitHub
-              </Button>
-            )}
-            {/* Si el usuario existe (está logueado) y existe avatar, mostrar datos */}
-            {user === USER_STATES.NOT_KNOWN && <span>Loading...</span>}
-          </div>
-        </section>
-      </AppLayout>
+      <section>
+        <img src="/logo.png" alt="logo" />
+        <h1>Devter</h1>
+        <h2>Talk about development with developers</h2>
+        <div>
+          {/* Si el usuario es null (no ha hecho login) */}
+          {user === USER_STATES.NOT_LOGGED && (
+            <Button onClick={handleClick}>
+              <GitHub fill={"white"} width={24} height={24} />
+              Login with GitHub
+            </Button>
+          )}
+          {/* Si el usuario existe (está logueado) y existe avatar, mostrar datos */}
+          {user === USER_STATES.NOT_KNOWN && <span>Loading...</span>}
+        </div>
+      </section>
 
       <style jsx>{`
         img {

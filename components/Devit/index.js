@@ -1,5 +1,7 @@
 import Avatar from "components/Avatar"
 import useTimeAgo from "hooks/useTimeAgo"
+import Link from "next/link"
+import { useRouter } from "next/router"
 
 export default function Devit({
   avatar,
@@ -10,9 +12,17 @@ export default function Devit({
   id,
 }) {
   const timeago = useTimeAgo(createdAt)
+  const router = useRouter()
+
+  // Al hacer click al tweet en cuestión
+  const handleArticleClick = (e) => {
+    e.preventDefault()
+    // Usamos router de next para redireccionar hacia la página
+    router.push(`/status/${id}`)
+  }
   return (
     <>
-      <article>
+      <article onClick={handleArticleClick}>
         <div>
           <Avatar src={avatar} alt={userName} />
         </div>
@@ -20,7 +30,11 @@ export default function Devit({
           <header>
             <strong>{userName}</strong>
             <span> · </span>
-            <date>{timeago}</date>
+            <Link href={`/status/${id}`}>
+              <a>
+                <time>{timeago}</time>
+              </a>
+            </Link>
           </header>
           <p>{content}</p>
           {img && <img src={img} />}
@@ -32,6 +46,10 @@ export default function Devit({
           padding: 10px 15px;
           border-bottom: 1px solid #eee;
         }
+        article:hover {
+          background: #f5f8fa;
+          cursor: pointer;
+        }
         div {
           margin-right: 10px;
         }
@@ -39,7 +57,7 @@ export default function Devit({
           margin: 0;
           line-height: 1.3125;
         }
-        date {
+        time {
           color: #888;
           font-size: 14px;
         }
@@ -48,6 +66,14 @@ export default function Devit({
           height: auto;
           border-radius: 10px;
           margin-top: 10px;
+        }
+        a {
+          color: #555;
+          font-size: 14px;
+          text-decoration: none;
+        }
+        a:hover {
+          text-decoration: underline;
         }
       `}</style>
     </>

@@ -14,7 +14,7 @@ export const globalStyles = css.global`
     padding: 0;
     margin: 0;
     overflow: hidden;
-    font: ${fonts.base};
+    font-family: ${fonts.base};
   }
   * {
     box-sizing: border-box;

@@ -2,8 +2,6 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import Head from "next/head"
 
-import AppLayout from "components/AppLayout"
-
 import Devit from "components/Devit"
 import useUser from "hooks/useUser"
 import { fetchLatestDevits } from "firebase/client"
@@ -23,49 +21,47 @@ export default function HomePage() {
 
   return (
     <>
-      <AppLayout>
-        <Head>
-          <title>Inicio / Devter</title>
-        </Head>
-        <header>
-          <h2>Inicio</h2>
-        </header>
-        <section>
-          {timeline.map(
-            ({ id, img, createdAt, userName, avatar, content, userId }) => {
-              return (
-                <Devit
-                  avatar={avatar}
-                  content={content}
-                  createdAt={createdAt}
-                  id={id}
-                  img={img}
-                  key={id}
-                  userId={userId}
-                  userName={userName}
-                />
-              )
-            }
-          )}
-        </section>
-        <nav>
-          <Link href="/">
-            <a>
-              <Home width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-          <Link href="/compose/tweet">
-            <a>
-              <Search width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-          <Link href="/compose/tweet">
-            <a>
-              <Create width={32} height={32} stroke="#09f" />
-            </a>
-          </Link>
-        </nav>
-      </AppLayout>
+      <Head>
+        <title>Inicio / Devter</title>
+      </Head>
+      <header>
+        <h2>Inicio</h2>
+      </header>
+      <section>
+        {timeline.map(
+          ({ id, img, createdAt, userName, avatar, content, userId }) => {
+            return (
+              <Devit
+                avatar={avatar}
+                content={content}
+                createdAt={createdAt}
+                id={id}
+                img={img}
+                key={id}
+                userId={userId}
+                userName={userName}
+              />
+            )
+          }
+        )}
+      </section>
+      <nav>
+        <Link href="/">
+          <a>
+            <Home width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+        <Link href="/compose/tweet">
+          <a>
+            <Search width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+        <Link href="/compose/tweet">
+          <a>
+            <Create width={32} height={32} stroke="#09f" />
+          </a>
+        </Link>
+      </nav>
       <style jsx>
         {`
           header {
