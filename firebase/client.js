@@ -1,6 +1,7 @@
 import firebase from "firebase/app"
 import "firebase/auth"
 import "firebase/firestore"
+import "firebase/storage"
 
 const firebaseConfig = {
   apiKey: "AIzaSyDRK1HaqFRlIC_dPtd02IZqTXt-O9CZun4",
@@ -42,6 +43,7 @@ export const onAuthStateChanged = (onChange) => {
   })
 }
 
+// Función de login con GitHub
 export const loginWithGitHub = () => {
   // Seleccionamos el provider de login con Firebase
   const githubProvider = new firebase.auth.GithubAuthProvider()
@@ -49,7 +51,8 @@ export const loginWithGitHub = () => {
   return firebase.auth().signInWithPopup(githubProvider)
 }
 
-export const addDevit = ({ avatar, content, userId, userName }) => {
+// Función que añade un devit a la colección de devits de Firebase
+export const addDevit = ({ avatar, content, userId, userName, img }) => {
   return db.collection("devits").add({
     avatar,
     content,
@@ -58,9 +61,11 @@ export const addDevit = ({ avatar, content, userId, userName }) => {
     createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
     likesCount: 0,
     sharedCount: 0,
+    img,
   })
 }
 
+// Función de obtener todos los devits ordenados por fecha descendiente (feed de devter)
 export const fetchLatestDevits = () => {
   return db
     .collection("devits")
