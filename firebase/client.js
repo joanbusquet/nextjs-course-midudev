@@ -65,25 +65,43 @@ export const addDevit = ({ avatar, content, userId, userName, img }) => {
   })
 }
 
+const mapDevitFromFirebaseToDevitObject = (doc) => {
+  // Extrae todos los campos de ese documento
+  const data = doc.data()
+  // Obtenemos el ID
+  const id = doc.id
+  // Obtenemos la fecha de creación
+  const { createdAt } = data
+  // Convertir a fecha de javascript con unary operator (+)
+  return { ...data, id, createdAt: +createdAt.toDate() }
+}
+
+// Cada vez que pase algo (crear, eliminar...)
+// Se ejecutará cada vez que pase algo a firebase
+export const listenLatestDevits = (callback) => {
+  return (
+    db
+      .collection("devits")
+      .orderBy("createdAt", "desc")
+      .limit(20)
+      // Todos los documentos de ese snapshot
+      .onSnapshot(({ docs }) => {
+        const newDevits = docs.map(mapDevitFromFirebaseToDevitObject)
+        callback(newDevits)
+      })
+  )
+}
+
 // Función de obtener todos los devits ordenados por fecha descendiente (feed de devter)
-export const fetchLatestDevits = () => {
+/* export const fetchLatestDevits = () => {
   return db
     .collection("devits")
     .orderBy("createdAt", "desc")
     .get()
     .then(({ docs }) => {
-      return docs.map((doc) => {
-        // Extrae todos los campos de ese documento
-        const data = doc.data()
-        // Obtenemos el ID
-        const id = doc.id
-        // Obtenemos la fecha de creación
-        const { createdAt } = data
-        // Convertir a fecha de javascript con unary operator (+)
-        return { ...data, id, createdAt: +createdAt.toDate() }
-      })
+      return docs.map(mapDevitFromFirebaseToDevitObject)
     })
-}
+} */
 
 export const uploadImage = (file) => {
   // Creamos una referencia pasandole lo que queremos subir en el storage

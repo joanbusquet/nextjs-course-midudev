@@ -4,7 +4,8 @@ import Head from "next/head"
 
 import Devit from "components/Devit"
 import useUser from "hooks/useUser"
-import { fetchLatestDevits } from "firebase/client"
+// import { fetchLatestDevits, listenLatestDevits } from "firebase/client"
+import { listenLatestDevits } from "firebase/client"
 
 import Create from "components/Icons/Create"
 import Home from "components/Icons/Home"
@@ -16,7 +17,18 @@ export default function HomePage() {
   const user = useUser() // Temporal
 
   useEffect(() => {
-    user && fetchLatestDevits().then(setTimeline)
+    // Inicializamos variable unsusbcribe para devolver (de firebase)
+    let unsubscribe
+    // Fetch devits de firebase según accedes
+    // user && fetchLatestDevits().then(setTimeline)
+    if (user) {
+      unsubscribe = listenLatestDevits((newDevits) => {
+        // Obtenemos el parametro que nos devuelve firebase en el callback
+        setTimeline(newDevits)
+      })
+    }
+    // Para limpiar el efecto, comprovamos si existe y limpiamos
+    return () => unsubscribe && unsubscribe()
   }, [user])
 
   return (

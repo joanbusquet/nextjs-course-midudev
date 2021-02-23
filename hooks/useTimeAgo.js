@@ -57,8 +57,12 @@ export default function useTimeAgo(timestamp) {
   const rtf = new Intl.RelativeTimeFormat("es", { style: "long" })
 
   // Obtenemos el valor i unidad del state timeago
-  const { value, unit } = timeago
+  if (timeago) {
+    const { value, unit } = timeago
 
-  // Formateamos la fecha mediante el API (parametros ej: -7, "day" = hace 7 días)
-  return rtf.format(value, unit)
+    // Formateamos la fecha mediante el API (parametros ej: -7, "day" = hace 7 días)
+    return rtf.format(value, unit)
+  } else {
+    return false
+  }
 }
